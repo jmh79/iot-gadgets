@@ -1,0 +1,10 @@
+/* <html>:n ja <body>:n korkeus pitää asettaa, tai muuten kartta ei näy!? */
+
+html { height: 100%; }
+body { height: 95%; }
+
+#map {
+  width: 66.67%;
+  height: 100%;
+  float: right;
+}

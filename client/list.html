@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html ng-app="gadgetsApp">
+  <head>
+    <title>Laiteluettelo</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/googlemaps.css">
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/app.js"></script>
+  </head>
+
+  <body id="angularBody" ng-controller="ListController">
+
+    <div id="map"></div>
+
+    <h4>Laitteet</h4>
+
+    <ul>
+      <li ng-repeat="g in gadgets">
+        <strong ng-bind="g.name"></strong><br />
+        <span>{{g.description}}</span><br />
+        <span ng-if="g.location">{{g.location.lat}}&deg;, {{g.location.lng}}&deg;</span>
+      </li>
+    </ul>
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIltG8SOlODw9Y22ydNtlHBTQq48okvVI&amp;callback=initMap"
+      async defer>
+    </script>
+
+  </body>
+</html>

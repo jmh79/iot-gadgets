@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Verkkosovelluskehitys: Loppuharjoitus</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      .todo { color: red; }
+      .todo::before { content: "TODO: "; font-weight: bold; }
+      .OK { color: green; }
+      .OK-kind-of { color: #09c; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h4>Loppuharjoitus</h4>
+      <p><strong>Kuvaus.</strong>
+        Asiakas haluaisi yksinkertaisen web-sovelluksen IoT-laitteiden
+        (IoT, internet of things, esineiden internet) hallintaan.
+        Käyttäjä voi rekisteröityä palveluun, määritellä sinne omia laitteitaan
+        (esimerkiksi puhelin, Arduino-korttitietokone, jne.) ja jokaiselle
+        laitteelle sen ominaisuuksia (esimerkiksi sijainti, lämpötila, kuva).
+        Käyttäjä voi muokata ja päivittää esineitä ja esineiden ominaisuuksia
+        web-käyttöliittymästä käsin. Esineiden ominaisuuksien arvoja voidaan
+        päivittää myös REST-apin kautta. Toivottuja ominaisuuksia ovat:
+      </p>
+      <ol>
+        <li class="todo">
+          Sovelluksella on selaimella käytettävä käyttöliittymä.
+        </li>
+        <li class="todo">
+          Käyttäjänä haluan ylläpitää esineitä
+          (Create, Read, Update, Delete = CRUD).
+        </li>
+        <li class="todo">
+          Jokaisella esineellä on ominaisuudet nimi, kuvaus ja sijainti
+          (WGS84-muodossa).
+        </li>
+        <li class="todo">
+          Käyttäjänä haluan tarkastella esinetietoa googlemaps-kartalla.
+        </li>
+        <li class="todo">
+          Käyttäjänä haluan ylläpitää esineen ominaisuuksia, eli voin siis
+          luoda ja muokata muita kuin kohdassa 3 määriteltyjä ominaisuuksia.
+          (Esimerkiksi sensoritieto "temperature").
+        </li>
+        <li class="todo">
+          Käyttäjänä haluan mahdollisuuden lukea ja muokata esinetietoa ja
+          esineiden ominaisuusietoja REST-apin kautta, jonka kautta saan
+          kytkettyä esineet palveluun.
+        </li>
+        <li class="todo">
+          Käyttäjänä haluan tunnistautua sovellukseen sähköpostiosoitteen
+          ja salasanan avulla (register, login, logout).
+        </li>
+      </ol>
+      <p>
+        Tavoitteena on siis toteuttaa mahdollisimman moni yllä luetelluista
+        vaatimuksista (jotka ovat vielä kuitenkin esimerkiksi tietoturvan
+        kannalta hyvinkin puutteellisia). Voit täsmentää vaatimuksia omien
+        toiveittesi mukaan esimerkiksi ominaisuustietojen tietotyyppien osalta.
+        Toisaalta aikataulun ollessa erittäin lyhyt, kaikkia vaatimuksia ei
+        vaadita tehtäväksi.
+      </p>
+    </div>
+  </body>
+</html>
