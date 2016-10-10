@@ -1,10 +1,39 @@
 var gadgetsApp = angular.module('gadgetsApp', []);
 
-gadgetsApp.controller('ListController', function ListController($scope, $http) {
+var uriGadgets = '/gadgets';
 
-  $http.get('/gadgets').then(function(response) {
-    $scope.gadgets = response.data;
+gadgetsApp.controller('ListController', function ListController($scope, $http, $timeout) {
+
+  /* GET hakee laitteet. */
+
+  $http.get('/gadgets').then(function(res) {
+    $scope.gadgets = res.data;
   });
+
+  /* PUT lisää uuden laitteen. */
+
+  $scope.addGadget = (newName, newDesc) => {
+    //console.log(newName + ":", newDesc);
+    $http.put('/gadgets/new', {
+      name: newName,
+      description: newDesc
+    });
+  }
+
+  /* PUT muokkaa olemassa olevan laitteen tietoja. */
+
+  $scope.editGadget = (g) => {
+    $http.put('/gadgets/' + g._id, g)
+    /*
+    .then(function(res) {
+      console.log('id =', id);
+      console.log('res =', res);
+    })
+    */
+    ;
+  }
+
+  /* Lisätään karttamerkit kartalle. */
 
   $scope.markers = [];
 
@@ -19,18 +48,21 @@ gadgetsApp.controller('ListController', function ListController($scope, $http) {
       });
     }
     else {
-      setTimeout(function() {
+      $timeout(function() {
         $scope.initMarkers();
       }, 1000);
     }
   }
+
 });
+
+/* Google-kartan alustus */
 
 function initMap() {
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 61.169158, lng: 28.771011 },
-    zoom: 12
+    zoom: 14
   });
 
   mapScope = angular.element(document.getElementById('angularBody')).scope();

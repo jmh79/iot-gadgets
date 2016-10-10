@@ -11,6 +11,7 @@ var Gadget = require('./gadget.js');
 /* URI:t */
 
 var uriGadgets = '/gadgets';
+var uriGadgetsNew = uriGadgets + '/new';
 var uriSession = '/session';
 
 /* Käyttöliittymän polku */
@@ -20,13 +21,6 @@ var uriClient = 'client';
 /* Yhdistetään tietokantaan. */
 
 mongoose.connect('mongodb://localhost/mongobongo');
-
-/*
-iot.save(function(err) {
-  if (err) throw err;
-  console.log("'" + iot.name + "' tallennettu.");
-});
-*/
 
 /* `express-session` valittaa, jos resave ja saveUninitialized puuttuvat. */
 
@@ -40,10 +34,18 @@ app.use(session({
 
 app.use(express.static(uriClient));
 
-/* GET-pyyntö juurihakemistoon avaa luettelonäkymän. */
+/* GET /
+    Avaa luettelonäkymän. */
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/' + uriClient + '/list.html');
+});
+
+/* GET `uriGadgetsNew`
+    Avaa lomakkeen, jolla lisätään uusi laite. */
+
+app.get(uriGadgetsNew, (req, res) => {
+  res.sendFile(__dirname + '/' + uriClient + '/edit.html');
 });
 
 /* Yhden käyttäjän haku vaatii sisäänkirjautumisen. */
@@ -75,29 +77,72 @@ app.get(uriGadgets + '/:username', (req, res) => {
 });
 */
 
-/* Kaikkien käyttäjien haku vaatii sisäänkirjautumisen. */
-/* Nimittäin sitten myöhemmin. */
+/* getGadgets() käsittelee hakutuloksia. */
+
+var getGadgets = (res, err, result) => {
+
+  if (err) throw err;
+
+  res.format({
+    json: function() {
+      res.json(result);
+    },
+    'default': function() {
+      res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.\r\n");
+    }
+  });
+}
+
+/* GET `uriGadgets`
+    Palauttaa kaikki laitteet JSON-muodossa. */
 
 app.get(uriGadgets, (req, res) => {
 
   Gadget.find({}, (err, result) => {
-
-    if (err) throw err;
-
-    /*
-    res.format({
-      json: function() {
-        res.send(JSON.stringify(result) + "\r\n");
-      },
-      'default': function() {
-        res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.\r\n");
-      }
-    });
-    */
-
-    res.json(result);
-
+    getGadgets(res, err, result);
   });
+});
+
+/* GET `uriGadgets`:in alihakemisto <id>
+    Palauttaa yhden laitteen. */
+
+app.get(uriGadgets + '/:gadgetId', (req, res) => {
+
+  Gadget.find({ _id: req.params.gadgetId }, (err, result) => {
+    getGadgets(res, err, result[0]);
+  });
+});
+
+/* PUT `uriGadgetsNew`
+    Tallentaa uuden laitteen. Tietojen on oltava JSON-muodossa. */
+
+app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
+
+  var g = new Gadget({
+    name: req.body.name,
+    description: req.body.description,
+  });
+
+  g.save(function(err) {
+    if (err) {
+      res.status(400).send('Tiedot ovat virheelliset.');
+    }
+    else {
+      console.log('Tallennettu:', g);
+      res.status(201).send('Tallennettu: ' + g.name);
+    }
+  });
+});
+
+/* PUT `uriGadgets`:in alihakemisto <id>
+    Päivittää laitteen. Tietojen on oltava JSON-muodossa. */
+
+app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
+
+  /**** TODO ****/
+
+  console.log('PUT:', req.body);
+  res.sendStatus(200);
 });
 
 /* Sisäänkirjautuminen */

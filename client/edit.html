@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="gadgetsApp">
   <head>
-    <title>Laiteluettelo</title>
+    <title>Lisää uusi laite</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" href="/css/ui.css">
@@ -14,16 +14,20 @@
 
     <div id="map"></div>
 
-    <h4>Laitteet</h4>
+    <h4>Lisää uusi laite</h4>
 
-    <ul>
-      <li ng-repeat="g in gadgets">
-        <strong ng-bind="g.name"></strong><br />
-        <span>{{ g.description }}</span><br />
-        <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
-        <button ng-click="editGadget(g)">Muokkaa</button>
-      </li>
-    </ul>
+    <form>
+      <label>
+        Nimi:<br />
+        <input name="txtName" value="" ng-model="gadgetName" />
+      </label>
+      <label>
+        Kuvaus:<br />
+        <textarea name="txtDesc" value="" ng-model="gadgetDesc" rows="4" cols="40">
+        </textarea>
+      </label>
+      <button ng-click="addGadget(gadgetName, gadgetDesc)">Tallenna</button>
+    </form>
 
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIltG8SOlODw9Y22ydNtlHBTQq48okvVI&amp;callback=initMap"
