@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="gadgetsApp">
   <head>
-    <title>Laiteluettelo</title>
+    <title>Laitteet</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link rel="stylesheet" href="/css/ui.css">
@@ -10,20 +10,40 @@
     <script src="/js/app.js"></script>
   </head>
 
-  <body id="angularBody" ng-controller="ListController">
+  <body id="angularBody" ng-controller="gadgetsController">
 
     <div id="map"></div>
 
     <h4>Laitteet</h4>
 
-    <ul>
+    <ul id="gadgetList">
       <li ng-repeat="g in gadgets">
         <strong ng-bind="g.name"></strong><br />
         <span>{{ g.description }}</span><br />
         <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
-        <button ng-click="editGadget(g)">Muokkaa</button>
+        <!--span id="test_{{g._id}}">#</span-->
+        <a href="" ng-click="openEditor(g)">Muokkaa</a><a
+        href="" ng-click="deleteGadget(g)">Poista</a>
       </li>
     </ul>
+
+    <div id="gadgetEditorGroup">
+      <div ng-repeat="g in gadgets" class="gadgetEditorPopup" id="edit_{{g._id}}">
+        <form>
+          <label>
+            Nimi:<br />
+            <input name="txtName" value="{{g.name}}" ng-model="g.name" />
+          </label>
+          <label>
+            Kuvaus:<br />
+            <textarea name="txtDesc" ng-model="g.description" rows="4" cols="40">
+              {{ g.description }}
+            </textarea>
+          </label>
+          <button ng-click="editGadget(g)">Tallenna</button>
+        </form>
+      </div>
+    </div>
 
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIltG8SOlODw9Y22ydNtlHBTQq48okvVI&amp;callback=initMap"

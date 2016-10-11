@@ -1,4 +1,41 @@
+/* Luettelo */
+
+body {
+  background: #eee;
+}
+
+a { text-decoration: none; }
+a, a:visited { color: #339; }
+a:hover { color: #66f; }
+a:active { color: #393; }
+
+#gadgetList li {
+  margin: .5em 0;
+}
+
+#gadgetList a {
+  margin-right: 1em;
+}
+
+/* Muokkausnäkymä */
+
+.gadgetEditorPopup {
+  visibility: hidden;
+  position: fixed;
+  background: #fff;
+  width: 50%;
+  left: 0;
+  top: 5em;
+  margin: 0 25%;
+  padding: 2em;
+  border: 1px solid black;
+}
+
 form label {
   display: block;
   margin: 1em 0;
+}
+
+form button {
+  margin-right: 1em;
 }
