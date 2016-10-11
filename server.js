@@ -44,21 +44,34 @@ app.get('/', (req, res) => {
 
 /* GET `uriGadgetsNew`
     Avaa lomakkeen, jolla lisätään uusi laite. */
-
+/*
 app.get(uriGadgetsNew, (req, res) => {
   res.sendFile(__dirname + '/' + uriClient + '/new.html');
 });
-
+*/
 /* GET `uriGadgets`/<id>/edit
     Avaa lomakkeen, jolla laitteen tietoja muokataan. */
-
+/*
 app.get(uriGadgets + '/:gadgetId' + uriEdit, (req, res) => {
   res.sendFile(__dirname + '/' + uriClient + '/edit.html');
 });
+*/
 
 /* logRequest() kirjaa HTTP-pyynnön konsoliin. */
 
-function logRequest(req) { console.log(req.method + ' ' + req.url); }
+function logRequest(req) {
+  var pad = (n) => { return (n < 10) ? ('0' + n) : n; }
+  var timestamp = new Date();
+  console.log(
+    timestamp.getFullYear() + '-' +
+    pad(timestamp.getMonth() + 1) + '-' +
+    pad(timestamp.getDate()) + ' ' +
+    pad(timestamp.getHours()) + ':' +
+    pad(timestamp.getMinutes()) + ':' +
+    pad(timestamp.getSeconds()) + ' ' +
+    req.method + ' ' + req.url
+  );
+}
 
 /* getGadgets() käsittelee hakutuloksia. */
 
@@ -116,8 +129,10 @@ app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
 
   var g = new Gadget({
     name: req.body.name,
-    description: req.body.description,
+    description: req.body.description
   });
+
+  /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
 
   g.save(function(err) {
     if (err) {
@@ -125,7 +140,7 @@ app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
     }
     else {
       console.log('Tallennettu:', g);
-      res.status(201).send('Tallennettu: ' + g.name);
+      res.status(201).send(g._id);
     }
   });
 });

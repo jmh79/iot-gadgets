@@ -1,13 +1,21 @@
 /* Luettelo */
 
 body {
-  background: #eee;
+  background: #fff;
 }
 
 a { text-decoration: none; }
 a, a:visited { color: #339; }
 a:hover { color: #66f; }
 a:active { color: #393; }
+
+#infoArea {
+  width: 40%;
+}
+
+#gadgetList {
+  margin: 0 .5em;
+}
 
 #gadgetList li {
   margin: .5em 0;
@@ -22,7 +30,7 @@ a:active { color: #393; }
 .gadgetEditorPopup {
   visibility: hidden;
   position: fixed;
-  background: #fff;
+  background: #eee;
   width: 50%;
   left: 0;
   top: 5em;

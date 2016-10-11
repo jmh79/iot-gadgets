@@ -4,7 +4,11 @@ html { height: 100%; }
 body { height: 95%; }
 
 #map {
-  width: 66.67%;
+  /*width: 66.67%;*/
+  width: 60%;
   height: 100%;
-  float: right;
+  position: fixed !important;
+  top: 0;
+  right: 0;
+  /*float: right;*/
 }

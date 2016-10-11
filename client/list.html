@@ -14,35 +14,49 @@
 
     <div id="map"></div>
 
-    <h4>Laitteet</h4>
+    <div id="infoArea">
 
-    <ul id="gadgetList">
-      <li ng-repeat="g in gadgets">
-        <strong ng-bind="g.name"></strong><br />
-        <span>{{ g.description }}</span><br />
-        <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
-        <!--span id="test_{{g._id}}">#</span-->
-        <a href="" ng-click="openEditor(g)">Muokkaa</a><a
-        href="" ng-click="deleteGadget(g)">Poista</a>
-      </li>
-    </ul>
+      <h4>Laitteet</h4>
 
-    <div id="gadgetEditorGroup">
-      <div ng-repeat="g in gadgets" class="gadgetEditorPopup" id="edit_{{g._id}}">
-        <form>
-          <label>
-            Nimi:<br />
-            <input name="txtName" value="{{g.name}}" ng-model="g.name" />
-          </label>
-          <label>
-            Kuvaus:<br />
-            <textarea name="txtDesc" ng-model="g.description" rows="4" cols="40">
-              {{ g.description }}
-            </textarea>
-          </label>
-          <button ng-click="editGadget(g)">Tallenna</button>
-        </form>
+      <p><a href="" ng-click="openEditor(gadgetEmpty)">Lisää uusi laite</a></p>
+
+      <!-- Luettelossa näkyvät kaikki laitteet paitsi $scope.gadgetEmpty. -->
+
+      <ul id="gadgetList">
+
+        <li ng-repeat="g in gadgets" ng-show="g._id">
+          <strong ng-bind="g.name"></strong>:
+          <span>{{ g.description }}</span><br />
+          <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
+          <a href="" ng-click="openEditor(g)">Muokkaa</a><a
+          href="" ng-click="deleteGadget(g)">Poista</a>
+        </li>
+
+      </ul>
+
+      <div id="gadgetPopupGroup">
+
+        <!-- Luodaan jokaiselle laitteelle näkymätön muokkausruutu. -->
+
+        <div ng-repeat="g in gadgets" class="gadgetEditorPopup" id="edit_{{g._id}}">
+          <form>
+            <label>
+              Nimi:<br />
+              <input name="txtName" value="{{g.name}}" ng-model="g.name" />
+            </label>
+            <label>
+              Kuvaus:<br />
+              <textarea name="txtDesc" ng-model="g.description" rows="4" cols="40">
+                {{ g.description }}
+              </textarea>
+            </label>
+            <button ng-click="editGadget(g)">Tallenna</button>
+            <a href="" ng-click="closeEditor(g)">Peruuta</a>
+          </form>
+        </div>
+
       </div>
+
     </div>
 
     <script
