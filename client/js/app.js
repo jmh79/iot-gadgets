@@ -90,6 +90,7 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
       var gIndex = $scope.gadgets.indexOf(g);
       if (gIndex > -1) {
         $scope.gadgets.splice(gIndex, 1);
+        /**** TODO: karttamerkit päivitettävä myös ****/
       }
     }
   }

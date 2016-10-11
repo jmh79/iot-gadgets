@@ -50,6 +50,10 @@
                 {{ g.description }}
               </textarea>
             </label>
+            <label ng-repeat="(key, value) in g.extra">
+              <span>{{key}}</span>:<br />
+              <input value="{{value}}" ng-model="value" />
+            </label>
             <button ng-click="editGadget(g)">Tallenna</button>
             <a href="" ng-click="closeEditor(g)">Peruuta</a>
           </form>
