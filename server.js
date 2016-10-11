@@ -152,7 +152,19 @@ app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
 
   logRequest(req);
 
-  /**** TODO ****/
+  /*
+  Gadget.findByIdAndUpdate(req.params.gadgetId,
+    {
+      ////////username: 'starlord88'
+      name: req.body.name,
+      description: req.body.description
+    },
+    function(err, g) {
+      if (err) throw err;
+      console.log(g);
+    }
+  );
+  */
 
   console.log('Päivitetään:', req.body);
   res.sendStatus(200);
@@ -167,7 +179,7 @@ app.delete(uriGadgets + '/:gadgetId', (req, res) => {
 
   Gadget.findByIdAndRemove(req.params.gadgetId, (err) => {
     if (err) throw err;
-    res.sendStatus(204);  // OK, No Content
+    res.sendStatus(204);  // OK, No Content (Firefox sanoo "no element found")
   });
 });
 

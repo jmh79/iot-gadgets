@@ -29,11 +29,37 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
   $scope.openEditor = (g) => {
 
-    /* Uutta laitetta lisättäessä tekstikentät on tyhjennettävä. */
+    /* $scope.gThis sisältää uuden tai muokattavan laitteen tiedot. */
 
     if (!g._id) {
-      g.name = '';
-      g.description = '';
+      $scope.gThis = {
+        name: '',
+        description: ''
+        /*,
+        location: {
+          lat: 0,
+          lng: 0
+        }*/
+      };
+    }
+    else {
+      $scope.gThis = {
+        _id: g._id,
+        name: g.name,
+        description: g.description
+      };
+      if (g.location) {
+        $scope.gThis.location = {
+          lat: g.location.lat,
+          lng: g.location.lng
+        };
+      }
+      if (g.extra) {
+        $scope.gThis.extra = {};
+        for (var attr in g.extra) {
+          $scope.gThis.extra[attr] = g.extra[attr];
+        }
+      }
     }
 
     document.getElementById('edit_' + g._id).style.visibility = 'visible';
@@ -48,30 +74,46 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
   $scope.editGadget = (g) => {
 
-    console.log(g);
+    console.log($scope.gThis);
 
-    if (!g._id) {
+    if (!$scope.gThis._id) {
 
-      /* Uuden lisäys */
+      /* Uuden lisäys. Palvelin palauttaa _id:n HTTP-statusviestinä. */
 
-      var gadgetNew = {
-        name: g.name,
-        description: g.description
-      }
-
-      /* Palvelin palauttaa HTTP-statusviestinä laitteen _id:n. */
-
-      $http.put(uriGadgetsNew, gadgetNew).then(function(res) {
-        gadgetNew._id = res.data;
-        $scope.gadgets.push(gadgetNew);
+      $http.put(uriGadgetsNew, $scope.gThis).then(function(res) {
+        $scope.gThis._id = res.data;
+        $scope.gadgets.push($scope.gThis);
       });
 
     }
     else {
 
-      /* Vanhan muokkaus */
+      /* Vanhan muokkaus. Selvitetään, mitä tietoja on muutettu. */
 
-      $http.put(uriGadgets + '/' + g._id, g);
+      if ($scope.gThis.name != g.name) {
+        console.log('name: "' + $scope.gThis.name + '"');
+      }
+      if ($scope.gThis.description != g.description) {
+        console.log('description: "' + $scope.gThis.description + '"');
+      }
+      if (g.location) {
+        if ($scope.gThis.location.lat != g.location.lat ||
+            $scope.gThis.location.lng != g.location.lng) {
+          console.log('location: { ' +
+            $scope.gThis.location.lat + ', ' +
+            $scope.gThis.location.lng + ' }'
+          );
+        }
+      }
+      if (g.extra) {
+        for (var attr in g.extra) {
+          if ($scope.gThis.extra[attr] != g.extra[attr]) {
+            console.log(attr + ': "' + $scope.gThis.extra[attr] + '"');
+          }
+        }
+      }
+
+      $http.put(uriGadgets + '/' + $scope.gThis._id, $scope.gThis);
     }
 
     $scope.closeEditor(g);

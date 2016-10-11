@@ -39,11 +39,15 @@ a:active { color: #393; }
   border: 1px solid black;
 }
 
-form label {
+.gadgetEditorPopup form label {
   display: block;
   margin: 1em 0;
 }
 
-form button {
+.gadgetEditorPopup form button {
   margin-right: 1em;
+}
+
+.gadgetExtra {
+  margin-bottom: 1em;
 }

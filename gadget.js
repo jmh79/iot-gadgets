@@ -13,6 +13,7 @@ var gadgetSchema = new Schema({
   created_at: Date,
   updated_at: Date
 });
+/**** TODO: lisätään Schema():n loppuun optio { strict: false } ****/
 
 /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
 
