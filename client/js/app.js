@@ -44,7 +44,6 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
     }
     else {
       $scope.gThis = {
-        //_id: g._id,
         name: g.name,
         description: g.description
       };
@@ -124,17 +123,6 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
             deleteExtra = false;
           }
         }
-        /*
-        for (var attr in g.extra) {
-          if ($scope.gThis.extra[attr] == g.extra[attr]) {
-            delete $scope.gThis.extra[attr];
-          }
-          else {
-            g.extra[attr] = $scope.gThis.extra[attr];
-            deleteExtra = false;
-          }
-        }
-        */
         if (deleteExtra) {
           delete $scope.gThis.extra;
         }

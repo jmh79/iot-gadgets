@@ -240,6 +240,55 @@ app.get(uriGadgets + '/:gadgetId/:parentKey/:propertyKey', (req, res) => {
   });
 });
 
+/******** Ominaisuuden tallennus: PUT `uriGadgets`/<id>/<ominaisuus>
+  Tietojen on oltava tekstimuodossa. */
+
+app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.text(), (req, res) => {
+
+  logRequest(req);
+
+  Gadget.findById(req.params.gadgetId, (err, g) => {
+
+    if (!g) {
+      res.status(404).send('Pyydettyä laitetta ei löydy.');
+    }
+    else {
+      //getProperty(g, req.params.propertyKey, req.params.propertyKey, res);
+
+      var successMessage;
+
+      if (req.params.propertyKey in g) {
+        successMessage = 'Päivitetty';
+        g[req.params.propertyKey] = req.body;
+      }
+      else {
+        successMessage = 'Lisätty';
+        if (!g.extra)
+          g.extra = {};
+        g.extra[req.params.propertyKey] = req.body;
+      }
+
+      /* Lisätään päivityksen aikaleima. */
+
+      g.updated_at = new Date();
+
+      g.save(function(err) {
+        if (err) {
+          res.status(400).send('Tiedot ovat virheelliset.');
+        }
+        else {
+          console.log(
+            successMessage + ': ' +
+            req.params.propertyKey + ' = "' +
+            req.body + '"'
+          );
+          res.sendStatus(200);
+        }
+      });
+    }
+  });
+});
+
 /* Yhden käyttäjän haku vaatii sisäänkirjautumisen. */
 
 /*
