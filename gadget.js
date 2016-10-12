@@ -10,9 +10,14 @@ var gadgetSchema = new Schema({
     lat: Number,  /* negative = south, positive = north */
     lng: Number   /* negative = west, positive = east */
   },
+  extra: { },
   created_at: Date,
   updated_at: Date
-});
+}
+/*, {
+  strict: false
+}*/
+);
 /**** TODO: lisätään Schema():n loppuun optio { strict: false } ****/
 
 /* Omat metodit on määriteltävä ennen mongoose.model():n kutsumista! */

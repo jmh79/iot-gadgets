@@ -35,28 +35,6 @@ app.use(session({
 
 app.use(express.static(uriClient));
 
-/* GET /
-    Avaa luettelonäkymän. */
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/' + uriClient + '/list.html');
-});
-
-/* GET `uriGadgetsNew`
-    Avaa lomakkeen, jolla lisätään uusi laite. */
-/*
-app.get(uriGadgetsNew, (req, res) => {
-  res.sendFile(__dirname + '/' + uriClient + '/new.html');
-});
-*/
-/* GET `uriGadgets`/<id>/edit
-    Avaa lomakkeen, jolla laitteen tietoja muokataan. */
-/*
-app.get(uriGadgets + '/:gadgetId' + uriEdit, (req, res) => {
-  res.sendFile(__dirname + '/' + uriClient + '/edit.html');
-});
-*/
-
 /* logRequest() kirjaa HTTP-pyynnön konsoliin. */
 
 function logRequest(req) {
@@ -80,48 +58,56 @@ var getGadgets = (res, err, result) => {
   if (err) {
     res.status(400).send('Väärin muotoiltu kysely.');
   }
-
-  res.format({
-    json: function() {
-      res.json(result);
-    },
-    'default': function() {
-      res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.\r\n");
-    }
-  });
+  else {
+    res.format({
+      json: function() {
+        res.json(result);
+      },
+      'default': function() {
+        res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.\r\n");
+      }
+    });
+  }
 }
 
-/* GET `uriGadgets`
-    Palauttaa kaikki laitteet JSON-muodossa. */
+/******** Luettelonäkymän avaus: GET /
+*/
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/' + uriClient + '/list.html');
+});
+
+/******** Kaikkien laitteiden haku: GET `uriGadgets`
+  Laitelista palautetaan JSON-muodossa. */
 
 app.get(uriGadgets, (req, res) => {
 
   logRequest(req);
 
-  Gadget.find({}, (err, result) => {
-    getGadgets(res, err, result);
+  Gadget.find({}, (err, gadgets) => {
+    getGadgets(res, err, gadgets);
   });
 });
 
-/* GET `uriGadgets`/<id>
-    Palauttaa yhden laitteen. */
+/******** Yhden laitteen haku: GET `uriGadgets`/<id>
+*/
 
 app.get(uriGadgets + '/:gadgetId', (req, res) => {
 
   logRequest(req);
 
-  Gadget.find({ _id: req.params.gadgetId }, (err, result) => {
-    if (!result || result.length < 1) {
-      res.status(400).send('Pyydettyä laitetta ei löydy.');
+  Gadget.findById(req.params.gadgetId, (err, g) => {
+    if (!g) {
+      res.status(404).send('Pyydettyä laitetta ei löydy.');
     }
     else {
-      getGadgets(res, err, result[0]);
+      getGadgets(res, err, g);
     }
   });
 });
 
-/* PUT `uriGadgetsNew`
-    Tallentaa uuden laitteen. Tietojen on oltava JSON-muodossa. */
+/******** Uuden laitteen tallennus: PUT `uriGadgetsNew`
+  Tietojen on oltava JSON-muodossa. */
 
 app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
 
@@ -151,8 +137,9 @@ app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
   });
 });
 
-/* PUT `uriGadgets`/<id>
-    Päivittää laitteen. Tietojen on oltava JSON-muodossa. */
+/******** Laitteen päivitys: PUT `uriGadgets`/<id>
+  Tietojen on oltava JSON-muodossa.
+  Viestin ei tarvitse sisältää tietoja, joita ei haluta muuttaa. */
 
 app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
 
@@ -171,8 +158,8 @@ app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
   res.sendStatus(200);
 });
 
-/* DELETE `uriGadgets`/<id>
-    Poistaa laitteen. */
+/******** Laitteen poisto: DELETE `uriGadgets`/<id>
+*/
 
 app.delete(uriGadgets + '/:gadgetId', (req, res) => {
 
@@ -182,6 +169,74 @@ app.delete(uriGadgets + '/:gadgetId', (req, res) => {
     if (err) throw err;
     console.log('Poistettu:', req.params.gadgetId);
     res.sendStatus(204);  // OK, No Content (Firefox sanoo "no element found")
+  });
+});
+
+/* getProperty() etsii ja näyttää ominaisuuden. */
+
+var getProperty = (g, key, keyName, res) => {
+  if (key in g)
+    res.status(200).send(
+      (typeof g[key] == 'number') ?
+        g[key].toString() :
+        g[key]
+    );
+  else
+    res.status(404).send('Ominaisuutta "' + keyName + '" ei löydy.');
+}
+
+/******** Ominaisuuden haku: GET `uriGadgets`/<id>/<ominaisuus>
+  Tieto palautetaan tekstimuodossa.
+*/
+
+app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
+
+  logRequest(req);
+
+  Gadget.findById(req.params.gadgetId, (err, g) => {
+
+    if (!g) {
+      res.status(404).send('Pyydettyä laitetta ei löydy.');
+    }
+    else {
+      getProperty(g, req.params.propertyKey, req.params.propertyKey, res);
+    }
+  });
+});
+
+/******** Aliominaisuuden haku: GET `uriGadgets`/<id>/<osasto>/<ominaisuus>
+  Tätä käytetään 'location'- ja 'extra'-tietojen hakuun.
+  Tieto palautetaan tekstimuodossa.
+*/
+
+app.get(uriGadgets + '/:gadgetId/:parentKey/:propertyKey', (req, res) => {
+
+  logRequest(req);
+
+  Gadget.findById(req.params.gadgetId, (err, g) => {
+
+    if (!g) {
+      res.status(404).send('Pyydettyä laitetta ei löydy.');
+    }
+    else {
+
+      parentKey = g[req.params.parentKey];
+
+      if (parentKey) {
+
+        getProperty(
+          parentKey, req.params.propertyKey,
+          req.params.parentKey + '/' + req.params.propertyKey,
+          res
+        );
+      }
+      else {
+
+        /* Virheilmoitus saadaan helpoiten getProperty():stä. */
+
+        getProperty(g, '', req.params.parentKey, res);
+      }
+    }
   });
 });
 
@@ -264,18 +319,3 @@ app.delete(uriSession, (req, res) => {
 /* Käynnistetään palvelin. */
 
 app.listen(8080);
-
-/*
-User.find({ username: 'blunstone' }, function(err, u) {
-  if (err) throw err;
-  if (u.length > 0) {
-    u[0].remove(function(err) {
-      if (err) throw err;
-      console.log("'" + u[0].username + "' poistettu.");
-    });
-  }
-  else {
-    console.log("Käyttäjää ei löydy.");
-  }
-});
-*/

@@ -119,6 +119,13 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
       if (g.extra) {
         var deleteExtra = true;
         for (var attr in g.extra) {
+          if ($scope.gThis.extra[attr] != g.extra[attr]) {
+            g.extra[attr] = $scope.gThis.extra[attr];
+            deleteExtra = false;
+          }
+        }
+        /*
+        for (var attr in g.extra) {
           if ($scope.gThis.extra[attr] == g.extra[attr]) {
             delete $scope.gThis.extra[attr];
           }
@@ -127,6 +134,7 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
             deleteExtra = false;
           }
         }
+        */
         if (deleteExtra) {
           delete $scope.gThis.extra;
         }

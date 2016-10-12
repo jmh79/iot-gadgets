@@ -24,7 +24,7 @@
 
       <ul id="gadgetList">
 
-        <li ng-repeat="g in gadgets" ng-show="g._id">
+        <li ng-repeat="g in gadgets | orderBy:'name'" ng-show="g._id">
           <strong ng-bind="g.name"></strong>:
           <span>{{ g.description }}</span><br />
           <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
