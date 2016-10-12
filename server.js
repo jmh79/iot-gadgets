@@ -132,6 +132,12 @@ app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
     description: req.body.description
   });
 
+  /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
+
+  var currentDate = new Date();
+  g.created_at = currentDate;
+  g.updated_at = currentDate;
+
   /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
 
   g.save(function(err) {
@@ -152,21 +158,16 @@ app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
 
   logRequest(req);
 
-  /*
-  Gadget.findByIdAndUpdate(req.params.gadgetId,
-    {
-      ////////username: 'starlord88'
-      name: req.body.name,
-      description: req.body.description
-    },
-    function(err, g) {
-      if (err) throw err;
-      console.log(g);
-    }
-  );
-  */
+  /* Lisätään päivityksen aikaleima.
+      Jostain syystä tämä ei onnistu `pre('update')`:lla. */
 
-  console.log('Päivitetään:', req.body);
+  req.body.updated_at = new Date();
+
+  Gadget.update({ _id: req.params.gadgetId }, req.body, function(err) {
+    if (err) throw err;
+    console.log('Päivitetty:', req.body);
+  });
+
   res.sendStatus(200);
 });
 
@@ -179,6 +180,7 @@ app.delete(uriGadgets + '/:gadgetId', (req, res) => {
 
   Gadget.findByIdAndRemove(req.params.gadgetId, (err) => {
     if (err) throw err;
+    console.log('Poistettu:', req.params.gadgetId);
     res.sendStatus(204);  // OK, No Content (Firefox sanoo "no element found")
   });
 });

@@ -15,16 +15,6 @@ var gadgetSchema = new Schema({
 });
 /**** TODO: lisätään Schema():n loppuun optio { strict: false } ****/
 
-/* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
-
-gadgetSchema.pre('save', function(next) {
-  var currentDate = new Date();
-  this.updated_at = currentDate;
-  if (!this.created_at)
-    this.created_at = currentDate;
-  next();
-});
-
 /* Omat metodit on määriteltävä ennen mongoose.model():n kutsumista! */
 
 /*
