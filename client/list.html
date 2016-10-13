@@ -47,18 +47,18 @@
           <form>
             <label>
               Nimi:<br />
-              <input name="txtName" value="{{gThis.name}}" ng-model="gThis.name" />
+              <input class="txtName" value="{{gThis.name}}" ng-model="gThis.name" />
             </label>
             <label>
               Kuvaus:<br />
-              <textarea name="txtDesc" ng-model="gThis.description" rows="4" cols="40">
+              <textarea class="txtDesc" ng-model="gThis.description" rows="4" cols="40">
                 {{ gThis.description }}
               </textarea>
             </label>
             <table class="gadgetExtra" ng-show="gThis.extra">
               <tr ng-repeat="(key, value) in gThis.extra">
                 <td>{{key}}</td>
-                <td><input value="{{value}}" ng-model="gThis.extra[key]" /></td>
+                <td><input class="txtExtra" value="{{value}}" ng-model="gThis.extra[key]" /></td>
               </tr>
             </table>
             <button ng-click="editGadget(g)">Tallenna</button>

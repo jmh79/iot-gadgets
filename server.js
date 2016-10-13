@@ -172,22 +172,16 @@ app.delete(uriGadgets + '/:gadgetId', (req, res) => {
   });
 });
 
-/* getProperty() etsii ja näyttää ominaisuuden. */
+/* sendPropertyValue() lähettää ominaisuuden arvon HTTP-vastauksena. */
 
-var getProperty = (g, key, keyName, res) => {
-  if (key in g)
-    res.status(200).send(
-      (typeof g[key] == 'number') ?
-        g[key].toString() :
-        g[key]
-    );
-  else
-    res.status(404).send('Ominaisuutta "' + keyName + '" ei löydy.');
+var sendPropertyValue = (value, res) => {
+  res.status(200).send(
+    (typeof value == 'number') ? value.toString() : value
+  );
 }
 
 /******** Ominaisuuden haku: GET `uriGadgets`/<id>/<ominaisuus>
-  Tieto palautetaan tekstimuodossa.
-*/
+  Tieto palautetaan tekstimuodossa. */
 
 app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
 
@@ -199,51 +193,29 @@ app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
       res.status(404).send('Pyydettyä laitetta ei löydy.');
     }
     else {
-      getProperty(g, req.params.propertyKey, req.params.propertyKey, res);
-    }
-  });
-});
-
-/******** Aliominaisuuden haku: GET `uriGadgets`/<id>/<osasto>/<ominaisuus>
-  Tätä käytetään 'location'- ja 'extra'-tietojen hakuun.
-  Tieto palautetaan tekstimuodossa.
-*/
-
-app.get(uriGadgets + '/:gadgetId/:parentKey/:propertyKey', (req, res) => {
-
-  logRequest(req);
-
-  Gadget.findById(req.params.gadgetId, (err, g) => {
-
-    if (!g) {
-      res.status(404).send('Pyydettyä laitetta ei löydy.');
-    }
-    else {
-
-      parentKey = g[req.params.parentKey];
-
-      if (parentKey) {
-
-        getProperty(
-          parentKey, req.params.propertyKey,
-          req.params.parentKey + '/' + req.params.propertyKey,
-          res
-        );
+      var key = req.params.propertyKey;
+      if (key in g) {
+        sendPropertyValue(g[key], res);
       }
       else {
-
-        /* Virheilmoitus saadaan helpoiten getProperty():stä. */
-
-        getProperty(g, '', req.params.parentKey, res);
+        //console.log(g);
+        if (g.extra && key in g.extra) {
+          sendPropertyValue(g.extra[key], res);
+        }
+        else {
+          res.status(404).send('Ominaisuutta "' + key + '" ei löydy.');
+        }
       }
     }
   });
 });
 
 /******** Ominaisuuden tallennus: PUT `uriGadgets`/<id>/<ominaisuus>
-  Tietojen on oltava tekstimuodossa. */
+  Tietojen on oltava tekstimuodossa.
+  Poikkeuksena 'location', jonka on oltava JSON-muodossa.
+  Jos ominaisuutta ei ole olemassa, se luodaan 'extra'-olion sisään. */
 
-app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.text(), (req, res) => {
+app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.text(), (req, res) => {
 
   logRequest(req);
 
@@ -253,35 +225,40 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.text(), (req, res) =>
       res.status(404).send('Pyydettyä laitetta ei löydy.');
     }
     else {
-      //getProperty(g, req.params.propertyKey, req.params.propertyKey, res);
 
-      var successMessage;
+      /* http://stackoverflow.com/a/10805292 */
 
-      if (req.params.propertyKey in g) {
-        successMessage = 'Päivitetty';
-        g[req.params.propertyKey] = req.body;
+      //var newValue = req.body.replace(/\r?\n|\r|\t/g, '');
+      var newValue = req.body;
+      var newData = {
+        updated_at: new Date()  // päivityksen aikaleima
+      }
+      var key = req.params.propertyKey;
+      var successMessage = 'Päivitetty';
+
+      if (key in g) {
+        newData[key] = /*(key === 'location') ?
+          JSON.parse(newValue) :*/
+          newValue;
       }
       else {
-        successMessage = 'Lisätty';
-        if (!g.extra)
-          g.extra = {};
-        g.extra[req.params.propertyKey] = req.body;
+        newData.extra = {};
+        if (g.extra) {
+          for (var attr in g.extra) {
+            newData.extra[attr] = g.extra[attr];
+          }
+        }
+        if (!(key in g.extra))
+          successMessage = 'Lisätty';
+        newData.extra[key] = newValue;
       }
 
-      /* Lisätään päivityksen aikaleima. */
-
-      g.updated_at = new Date();
-
-      g.save(function(err) {
+      Gadget.update({ _id: req.params.gadgetId }, newData, function(err) {
         if (err) {
           res.status(400).send('Tiedot ovat virheelliset.');
         }
         else {
-          console.log(
-            successMessage + ': ' +
-            req.params.propertyKey + ' = "' +
-            req.body + '"'
-          );
+          console.log(successMessage + ': ' + key + ' = "' + newValue + '"');
           res.sendStatus(200);
         }
       });

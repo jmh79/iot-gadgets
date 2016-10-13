@@ -44,6 +44,13 @@ a:active { color: #393; }
   margin: 1em 0;
 }
 
+.txtName, .txtDesc, .txtExtra {
+	width: 100%;
+	border-width: 1px;
+	border-style: inset;
+	padding: 0;
+}
+
 .gadgetEditorPopup form button {
   margin-right: 1em;
 }
