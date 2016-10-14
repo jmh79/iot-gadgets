@@ -28,11 +28,6 @@
           <strong ng-bind="g.name"></strong>:
           <span>{{ g.description }}</span><br />
           <span ng-show="g.location">{{ g.location.lat }}&deg;, {{ g.location.lng }}&deg;<br /></span>
-          <!--div ng-show="g.extra">
-            <span ng-repeat="(key, value) in g.extra">
-              {{key}}: {{value}}<br />
-            </span>
-          </div-->
           <a href="" ng-click="openEditor(g)">Muokkaa</a><a
           href="" ng-click="deleteGadget(g)">Poista</a>
         </li>
@@ -43,22 +38,22 @@
 
         <!-- Luodaan jokaiselle laitteelle näkymätön muokkausruutu. -->
 
-        <div ng-repeat="g in gadgets" class="gadgetEditorPopup" id="edit_{{g._id}}">
+        <div ng-repeat="g in gadgets" class="popup gadgetEditorPopup" id="edit_{{g._id}}">
           <form>
             <label>
               Nimi:<br />
-              <input class="txtName" value="{{gThis.name}}" ng-model="gThis.name" />
+              <input class="txtInput" value="{{gThis.name}}" ng-model="gThis.name" />
             </label>
             <label>
               Kuvaus:<br />
-              <textarea class="txtDesc" ng-model="gThis.description" rows="4" cols="40">
+              <textarea class="txtInput" ng-model="gThis.description" rows="4" cols="40">
                 {{ gThis.description }}
               </textarea>
             </label>
             <table class="gadgetExtra" ng-show="gThis.extra">
               <tr ng-repeat="(key, value) in gThis.extra">
                 <td>{{key}}</td>
-                <td><input class="txtExtra" value="{{value}}" ng-model="gThis.extra[key]" /></td>
+                <td><input class="txtInput" value="{{value}}" ng-model="gThis.extra[key]" /></td>
               </tr>
             </table>
             <button ng-click="editGadget(g)">Tallenna</button>

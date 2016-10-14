@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html ng-app="usersApp">
+  <head>
+    <title>Laitetietokanta: Sisäänkirjautuminen</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/ui.css">
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/userapp.js"></script>
+  </head>
+
+  <body ng-controller="usersController">
+
+    <div id="loginPopup" class="popup userPopup">
+
+      <h4>Kirjaudu sisään</h4>
+
+      <form>
+        <label>
+          <input class="txtInput" value="{{email}}" ng-model="email" placeholder="Sähköpostiosoite" />
+        </label>
+        <label>
+          <input class="txtInput" value="{{password}}" ng-model="password" type="password" placeholder="Salasana" />
+        </label>
+        <p>
+          <button ng-click="loginUser()">OK</button>
+          <a href="" ng-click="clearLoginPopup()">Tyhjennä</a>
+        </p>
+        <hr />
+        <p>
+          <a href="" ng-click="openRegisterPopup()">Uusi käyttäjä</a>
+        </p>
+      </form>
+
+    </div>
+
+    <div id="registerPopup" class="popup userPopup">
+
+      <h4>Rekisteröidy</h4>
+
+      <!--form>
+        <label>
+          <input class="txtInput" placeholder="Sähköpostiosoite" />
+        </label>
+        <label>
+          <input class="txtInput" type="password" placeholder="Salasana" />
+        </label>
+        <button ng-click="loginUser(g)">OK</button>
+        <a href="" ng-click="clearLoginPopup(g)">Peruuta</a>
+      </form-->
+
+    </div>
+
+  </body>
+</html>

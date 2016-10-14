@@ -13,19 +13,6 @@ var gadgetSchema = new Schema({
   extra: { },
   created_at: Date,
   updated_at: Date
-}
-/*, {
-  strict: false
-}*/
-);
-/**** TODO: lisätään Schema():n loppuun optio { strict: false } ****/
-
-/* Omat metodit on määriteltävä ennen mongoose.model():n kutsumista! */
-
-/*
-gadgetSchema.methods.doSomething = function() {
-
-};
-*/
+});
 
 module.exports = mongoose.model('Gadget', gadgetSchema);

@@ -1,10 +1,9 @@
 var gadgetsApp = angular.module('gadgetsApp', []);
 
 var uriGadgets = '/gadgets';
-var uriGadgetsNew = uriGadgets + '/new';
-var uriEdit = '/edit';
+//var uriGadgetsNew = uriGadgets + '/new';
 
-gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) => {
+gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout) => {
 
   /* Luettelosivun avaaminen */
 
@@ -75,14 +74,11 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
   $scope.editGadget = (g) => {
 
-    //console.log($scope.gThis);
-    //console.log($scope.gThis.extra);
-
     if (!g._id) {
 
       /* Uuden lisäys. Palvelin palauttaa _id:n HTTP-statusviestinä. */
 
-      $http.put(uriGadgetsNew, $scope.gThis).then(function(res) {
+      $http.put(uriGadgets, $scope.gThis).then(function(res) {
         $scope.gThis._id = res.data;
         $scope.gadgets.push($scope.gThis);
       });
@@ -178,8 +174,6 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
           gadgetId: sg._id
         }));
       });
-
-      console.log($scope.markers);
     }
     else {
 

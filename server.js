@@ -7,12 +7,14 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 
 var Gadget = require('./gadget.js');
+var GadgetUser = require('./gadgetuser.js');
 
 /* URI:t */
 
 var uriGadgets = '/gadgets';
-var uriGadgetsNew = uriGadgets + '/new';
-var uriEdit = '/edit';
+//var uriGadgetsNew = uriGadgets + '/new';
+//var uriEdit = '/edit';
+var uriUsers = '/users';
 var uriSession = '/session';
 
 /* Käyttöliittymän polku */
@@ -70,11 +72,17 @@ var getGadgets = (res, err, result) => {
   }
 }
 
-/******** Luettelonäkymän avaus: GET /
+/******** Sisäänkirjautumissivun tai luettelonäkymän avaus: GET /
 */
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/' + uriClient + '/list.html');
+  if ("login" in req.session) {
+    res.sendFile(__dirname + '/' + uriClient + '/list.html');
+  }
+  else {
+    res.sendFile(__dirname + '/' + uriClient + '/list.html'); //////// WIP
+    //res.sendFile(__dirname + '/' + uriClient + '/login.html');
+  }
 });
 
 /******** Kaikkien laitteiden haku: GET `uriGadgets`
@@ -106,10 +114,10 @@ app.get(uriGadgets + '/:gadgetId', (req, res) => {
   });
 });
 
-/******** Uuden laitteen tallennus: PUT `uriGadgetsNew`
+/******** Uuden laitteen tallennus: PUT `uriGadgets`
   Tietojen on oltava JSON-muodossa. */
 
-app.put(uriGadgetsNew, bodyParser.json(), (req, res) => {
+app.put(uriGadgets, bodyParser.json(), (req, res) => {
 
   logRequest(req);
 
@@ -261,6 +269,37 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.te
 });
 
 /**** TODO: ominaisuuden poisto ****/
+
+/******** Uuden käyttäjän tallennus: PUT `uriUsers`
+  Tietojen on oltava JSON-muodossa. */
+
+app.put(uriUsers, bodyParser.json(), (req, res) => {
+
+  logRequest(req);
+
+  var g = new Gadget({
+    name: req.body.name,
+    description: req.body.description
+  });
+
+  /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
+
+  var currentDate = new Date();
+  g.created_at = currentDate;
+  g.updated_at = currentDate;
+
+  /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
+
+  g.save(function(err) {
+    if (err) {
+      res.status(400).send('Tiedot ovat virheelliset.');
+    }
+    else {
+      console.log('Tallennettu:', g);
+      res.status(201).send(g._id);
+    }
+  });
+});
 
 /* Yhden käyttäjän haku vaatii sisäänkirjautumisen. */
 

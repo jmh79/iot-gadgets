@@ -1,4 +1,4 @@
-/* Luettelo */
+/* Laiteluettelo */
 
 body {
   background: #fff;
@@ -25,11 +25,9 @@ a:active { color: #393; }
   margin-right: 1em;
 }
 
-/* Muokkausnäkymä */
+/* Muokkausnäkymä ja sisäänkirjautumisruutu */
 
-.gadgetEditorPopup {
-  visibility: hidden;
-  position: fixed;
+.popup {
   background: #eee;
   width: 50%;
   left: 0;
@@ -39,22 +37,47 @@ a:active { color: #393; }
   border: 1px solid black;
 }
 
-.gadgetEditorPopup form label {
+.popup form label {
   display: block;
   margin: 1em 0;
 }
 
-.txtName, .txtDesc, .txtExtra {
+.popup .txtInput {
 	width: 100%;
 	border-width: 1px;
 	border-style: inset;
 	padding: 0;
 }
 
-.gadgetEditorPopup form button {
+.popup button {
   margin-right: 1em;
 }
 
-.gadgetExtra {
+/* Muokkausnäkymä */
+
+.gadgetEditorPopup {
+  visibility: hidden;
+  position: fixed;
+}
+
+.gadgetEditorPopup table.gadgetExtra {
   margin-bottom: 1em;
+}
+
+/* Sisäänkirjautumisruutu */
+
+.userPopup {
+  display: block;
+  position: relative;
+  width: 40%;
+  margin: 0 30%;
+  text-align: center;
+}
+
+.userPopup hr {
+  margin: 1.5em 0;
+}
+
+#registerPopup {
+  display: none;
 }
