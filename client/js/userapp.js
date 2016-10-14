@@ -39,7 +39,7 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
 
       var loginAttempt = {
         email: $scope.email,
-        passwordSHA256: $scope.password
+        passwordSHA256: Sha256.hash($scope.password)
       };
 
       /* Tarkistetaan salasana ja avataan istunto. */
