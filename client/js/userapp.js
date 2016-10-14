@@ -78,7 +78,7 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
           passwordSHA256: Sha256.hash($scope.password)
         };
 
-        /* Tarkistetaan salasana ja avataan istunto. */
+        /* Tallennetaan käyttäjä. */
 
         $http.put(uriUsers, newUser).success(function(res) {
 

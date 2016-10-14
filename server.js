@@ -312,6 +312,7 @@ app.put(uriUsers, bodyParser.json(), (req, res) => {
 
   u.save(function(err) {
     if (err) {
+      //console.log(err);
       res.status(400).send('Tiedot ovat virheelliset.');
     }
     else {
@@ -336,8 +337,6 @@ app.post(uriSession, bodyParser.json(), (req, res) => {
     if (err) throw err;
 
     if (u.length === 1) {
-
-      //console.log(req.session);
 
       if ("login" in req.session) {
         res.status(409).send('Istunto on jo olemassa.');
