@@ -85,11 +85,6 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
           /* Tilin luominen onnistui, joten kirjaudutaan sisään. */
 
           $scope.loginUser();
-          /*
-          //$window.location.reload();
-          $window.alert('Käyttäjätili luotu.');
-          closeRegisterPopup();
-          */
 
         });
 

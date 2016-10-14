@@ -276,7 +276,7 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.te
             newData.extra[attr] = g.extra[attr];
           }
         }
-        if (!(key in g.extra))
+        if (!(key in newData.extra))
           successMessage = 'Lisätty';
         newData.extra[key] = newValue;
       }
