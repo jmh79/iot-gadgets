@@ -16,12 +16,15 @@
 
     <div id="infoArea">
 
+      <p id="userInfo">
+        {{userEmail}}&emsp;&bull;&emsp;<a href=""
+        ng-click="logoutUser()">Kirjaudu ulos</a>
+      </p>
+
       <h4>Laitteet</h4>
 
       <p>
-        <a href="" ng-click="openEditor(gadgetEmpty)">Lisää uusi
-        laite</a>&emsp;&bull;&emsp;<a
-        href="" ng-click="logoutUser()">Kirjaudu ulos</a>
+        <a href="" ng-click="openEditor(gadgetEmpty)">Lisää uusi laite</a>
       </p>
 
       <!-- Luettelossa näkyvät kaikki laitteet paitsi $scope.gadgetEmpty. -->

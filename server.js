@@ -66,7 +66,7 @@ var getGadgets = (res, err, result) => {
         res.json(result);
       },
       'default': function() {
-        res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.\r\n");
+        res.status(406).send("Pyydettyä sisältötyyppiä ei tueta.");
       }
     });
   }
@@ -80,7 +80,6 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/' + uriClient + '/list.html');
   }
   else {
-    //res.sendFile(__dirname + '/' + uriClient + '/list.html'); //////// WIP
     res.sendFile(__dirname + '/' + uriClient + '/login.html');
   }
 });
@@ -90,11 +89,16 @@ app.get('/', (req, res) => {
 
 app.get(uriGadgets, (req, res) => {
 
-  logRequest(req);
+  if ("login" in req.session) {
 
-  Gadget.find({}, (err, gadgets) => {
-    getGadgets(res, err, gadgets);
-  });
+    logRequest(req);
+
+    Gadget.find({}, (err, gadgets) => {
+      getGadgets(res, err, gadgets);
+    });
+  }
+  else
+    res.sendStatus(401);
 });
 
 /******** Yhden laitteen haku: GET `uriGadgets`/<id>
@@ -102,16 +106,21 @@ app.get(uriGadgets, (req, res) => {
 
 app.get(uriGadgets + '/:gadgetId', (req, res) => {
 
-  logRequest(req);
+  if ("login" in req.session) {
 
-  Gadget.findById(req.params.gadgetId, (err, g) => {
-    if (!g) {
-      res.status(404).send('Pyydettyä laitetta ei löydy.');
-    }
-    else {
-      getGadgets(res, err, g);
-    }
-  });
+    logRequest(req);
+
+    Gadget.findById(req.params.gadgetId, (err, g) => {
+      if (!g) {
+        res.status(404).send('Pyydettyä laitetta ei löydy.');
+      }
+      else {
+        getGadgets(res, err, g);
+      }
+    });
+  }
+  else
+    res.sendStatus(401);
 });
 
 /******** Uuden laitteen tallennus: PUT `uriGadgets`
@@ -119,30 +128,35 @@ app.get(uriGadgets + '/:gadgetId', (req, res) => {
 
 app.put(uriGadgets, bodyParser.json(), (req, res) => {
 
-  logRequest(req);
+  if ("login" in req.session) {
 
-  var g = new Gadget({
-    name: req.body.name,
-    description: req.body.description
-  });
+    logRequest(req);
 
-  /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
+    var g = new Gadget({
+      name: req.body.name,
+      description: req.body.description
+    });
 
-  var currentDate = new Date();
-  g.created_at = currentDate;
-  g.updated_at = currentDate;
+    /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
 
-  /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
+    var currentDate = new Date();
+    g.created_at = currentDate;
+    g.updated_at = currentDate;
 
-  g.save(function(err) {
-    if (err) {
-      res.status(400).send('Tiedot ovat virheelliset.');
-    }
-    else {
-      console.log('Tallennettu:', g);
-      res.status(201).send(g._id);
-    }
-  });
+    /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
+
+    g.save(function(err) {
+      if (err) {
+        res.status(400).send('Tiedot ovat virheelliset.');
+      }
+      else {
+        console.log('Tallennettu:', g);
+        res.status(201).send(g._id);
+      }
+    });
+  }
+  else
+    res.sendStatus(401);
 });
 
 /******** Laitteen päivitys: PUT `uriGadgets`/<id>
@@ -151,19 +165,24 @@ app.put(uriGadgets, bodyParser.json(), (req, res) => {
 
 app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
 
-  logRequest(req);
+  if ("login" in req.session) {
 
-  /* Lisätään päivityksen aikaleima.
-      Jostain syystä tämä ei onnistu `pre('update')`:lla. */
+    logRequest(req);
 
-  req.body.updated_at = new Date();
+    /* Lisätään päivityksen aikaleima.
+        Jostain syystä tämä ei onnistu `pre('update')`:lla. */
 
-  Gadget.update({ _id: req.params.gadgetId }, req.body, function(err) {
-    if (err) throw err;
-    console.log('Päivitetty:', req.body);
-  });
+    req.body.updated_at = new Date();
 
-  res.sendStatus(200);
+    Gadget.update({ _id: req.params.gadgetId }, req.body, function(err) {
+      if (err) throw err;
+      console.log('Päivitetty:', req.body);
+    });
+
+    res.sendStatus(200);
+  }
+  else
+    res.sendStatus(401);
 });
 
 /******** Laitteen poisto: DELETE `uriGadgets`/<id>
@@ -171,13 +190,18 @@ app.put(uriGadgets + '/:gadgetId', bodyParser.json(), (req, res) => {
 
 app.delete(uriGadgets + '/:gadgetId', (req, res) => {
 
-  logRequest(req);
+  if ("login" in req.session) {
 
-  Gadget.findByIdAndRemove(req.params.gadgetId, (err) => {
-    if (err) throw err;
-    console.log('Poistettu:', req.params.gadgetId);
-    res.sendStatus(204);  // OK, No Content (Firefox sanoo "no element found")
-  });
+    logRequest(req);
+
+    Gadget.findByIdAndRemove(req.params.gadgetId, (err) => {
+      if (err) throw err;
+      console.log('Poistettu:', req.params.gadgetId);
+      res.sendStatus(204);  // OK, No Content (Firefox sanoo "no element found")
+    });
+  }
+  else
+    res.sendStatus(401);
 });
 
 /* sendPropertyValue() lähettää ominaisuuden arvon HTTP-vastauksena. */
@@ -189,6 +213,7 @@ var sendPropertyValue = (value, res) => {
 }
 
 /******** Ominaisuuden haku: GET `uriGadgets`/<id>/<ominaisuus>
+  Tähän ei vaadita sisäänkirjautumista.
   Tieto palautetaan tekstimuodossa. */
 
 app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
@@ -218,6 +243,7 @@ app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
 });
 
 /******** Ominaisuuden tallennus: PUT `uriGadgets`/<id>/<ominaisuus>
+  Tähän ei vaadita sisäänkirjautumista.
   Tietojen on oltava tekstimuodossa.
   Poikkeuksena 'location', jonka on oltava JSON-muodossa.
   Jos ominaisuutta ei ole olemassa, se luodaan 'extra'-olion sisään. */
@@ -295,38 +321,8 @@ app.put(uriUsers, bodyParser.json(), (req, res) => {
   });
 });
 
-/* Yhden käyttäjän haku vaatii sisäänkirjautumisen. */
-
-/*
-app.get(uriGadgets + '/:username', (req, res) => {
-
-  logRequest(req);
-
-  if ("login" in req.session) {
-
-    User.find({ username: req.params.username }, (err, u) => {
-
-      if (err) throw err;
-
-      if (u.length > 0) {
-        //u[0].isAdmin();
-        res.send(JSON.stringify(u[0]) + "\r\n");
-      }
-      else {
-        res.status(404).send("Käyttäjää ei löydy.\r\n");
-      }
-
-    });
-  }
-  else {
-
-    res.status(401).send("Sisäänkirjautuminen vaaditaan.\r\n");
-  }
-
-});
-*/
-
-/* Sisäänkirjautuminen */
+/******** Sisäänkirjautuminen: POST `uriSession`
+  Tietojen on oltava JSON-muodossa. */
 
 app.post(uriSession, bodyParser.json(), (req, res) => {
 
@@ -344,12 +340,11 @@ app.post(uriSession, bodyParser.json(), (req, res) => {
       //console.log(req.session);
 
       if ("login" in req.session) {
-        res.status(409).send('Istunto on jo olemassa.\r\n');
+        res.status(409).send('Istunto on jo olemassa.');
       }
       else {
         req.session.login = req.body.email;
         res.status(201).send('Istunto avattu käyttäjälle "' + req.body.email + '"');
-        //res.status(201).sendFile(__dirname + '/' + uriClient + '/list.html');
       }
 
     }
@@ -362,7 +357,8 @@ app.post(uriSession, bodyParser.json(), (req, res) => {
 
 });
 
-/* Uloskirjautuminen */
+/******** Uloskirjautuminen: DELETE `uriSession`
+*/
 
 app.delete(uriSession, (req, res) => {
 
@@ -370,10 +366,25 @@ app.delete(uriSession, (req, res) => {
 
   if ("login" in req.session) {
     delete req.session.login;
-    res.status(200).send('Uloskirjautuminen onnistui.\r\n');
+    res.status(200).send('Uloskirjautuminen onnistui.');
   }
   else {
-    res.status(404).send('Istuntoa ei ole avattu.\r\n');
+    res.status(404).send('Istuntoa ei ole avattu.');
+  }
+
+});
+
+/******** Kirjautuneen käyttäjän nimen haku: GET `uriSession`
+*/
+
+app.get(uriSession, (req, res) => {
+
+  if ("login" in req.session) {
+    logRequest(req);
+    res.status(200).send(req.session.login);
+  }
+  else {
+    res.sendStatus(401);
   }
 
 });

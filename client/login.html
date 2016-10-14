@@ -24,10 +24,10 @@
         <label>
           <input class="txtInput" value="{{password}}" ng-model="password" type="password" placeholder="Salasana" />
         </label>
-        <p id="loginFailureMessage">Väärä osoite tai salasana</p>
+        <p class="loginFailureMessage" id="loginError">Väärä osoite tai salasana</p>
         <p>
           <button ng-click="loginUser()">OK</button>
-          <a href="" ng-click="clearLoginPopup()">Tyhjennä</a>
+          <a href="" ng-click="clearLoginFields()">Tyhjennä</a>
         </p>
         <hr />
         <p>
@@ -41,16 +41,22 @@
 
       <h4>Rekisteröidy</h4>
 
-      <!--form>
+      <form>
         <label>
-          <input class="txtInput" placeholder="Sähköpostiosoite" />
+          <input class="txtInput" value="{{email}}" ng-model="email" placeholder="Sähköpostiosoite" />
         </label>
         <label>
-          <input class="txtInput" type="password" placeholder="Salasana" />
+          <input class="txtInput" value="{{password}}" ng-model="password" type="password" placeholder="Salasana" />
         </label>
-        <button ng-click="loginUser(g)">OK</button>
-        <a href="" ng-click="clearLoginPopup(g)">Peruuta</a>
-      </form-->
+        <label>
+          <input class="txtInput" value="{{passwordAgain}}" ng-model="passwordAgain" type="password" placeholder="Salasana uudelleen" />
+        </label>
+        <p class="loginFailureMessage" id="registerError">Salasanakentät eivät täsmää</p>
+        <p>
+          <button ng-click="createUser()">OK</button>
+          <a href="" ng-click="closeRegisterPopup(g)">Peruuta</a>
+        </p>
+      </form>
 
     </div>
 

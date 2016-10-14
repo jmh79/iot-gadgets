@@ -5,6 +5,11 @@ var uriSession = '/session';
 
 gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) => {
 
+  $http.get(uriSession).success(function(res) {
+
+    $scope.userEmail = res;
+  });
+
   /* Luettelosivun avaaminen */
 
   $http.get(uriGadgets).then(function(res) {

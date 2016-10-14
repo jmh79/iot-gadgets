@@ -7,13 +7,17 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
 
   /* Tekstikenttien tyhjennys */
 
-  $scope.clearLoginPopup = () => {
+  $scope.clearLoginFields = () => {
+
     $scope.email = '';
     $scope.password = '';
-    document.getElementById('loginFailureMessage').style.display = 'none';
+    $scope.passwordAgain = '';
+
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('registerError').style.display = 'none';
   }
 
-  $scope.clearLoginPopup();
+  $scope.clearLoginFields();
 
   /* Uuden käyttäjän rekisteröintiruudun avaaminen ja sulkeminen */
 
@@ -21,12 +25,14 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
 
     document.getElementById('loginPopup').style.display = 'none';
     document.getElementById('registerPopup').style.display = 'block';
+    $scope.clearLoginFields();
   }
 
   $scope.closeRegisterPopup = (g) => {
 
     document.getElementById('registerPopup').style.display = 'none';
     document.getElementById('loginPopup').style.display = 'block';
+    $scope.clearLoginFields();
   }
 
   /* Sisäänkirjautuminen */
@@ -52,10 +58,48 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
 
       }).error(function (res) {
 
-        document.getElementById('loginFailureMessage').style.display = 'block';
+        document.getElementById('loginError').style.display = 'block';
 
       });
 
     }
   }
+
+  $scope.createUser = () => {
+
+    if ($scope.email && $scope.password && $scope.passwordAgain) {
+
+      if ($scope.password == $scope.passwordAgain) {
+
+        /* Lasketaan salasanan SHA256-tiiviste. */
+
+        var newUser = {
+          email: $scope.email,
+          passwordSHA256: Sha256.hash($scope.password)
+        };
+
+        /* Tarkistetaan salasana ja avataan istunto. */
+
+        $http.put(uriUsers, newUser).success(function(res) {
+
+          /* Tilin luominen onnistui, joten kirjaudutaan sisään. */
+
+          $scope.loginUser();
+          /*
+          //$window.location.reload();
+          $window.alert('Käyttäjätili luotu.');
+          closeRegisterPopup();
+          */
+
+        });
+
+      }
+      else {
+
+        document.getElementById('registerError').style.display = 'block';
+
+      }
+    }
+  }
+
 });
