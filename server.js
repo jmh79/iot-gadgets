@@ -198,7 +198,6 @@ app.get(uriGadgets + '/:gadgetId/:propertyKey', (req, res) => {
         sendPropertyValue(g[key], res);
       }
       else {
-        //console.log(g);
         if (g.extra && key in g.extra) {
           sendPropertyValue(g.extra[key], res);
         }
@@ -226,9 +225,6 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.te
     }
     else {
 
-      /* http://stackoverflow.com/a/10805292 */
-
-      //var newValue = req.body.replace(/\r?\n|\r|\t/g, '');
       var newValue = req.body;
       var newData = {
         updated_at: new Date()  // päivityksen aikaleima
@@ -237,9 +233,7 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.te
       var successMessage = 'Päivitetty';
 
       if (key in g) {
-        newData[key] = /*(key === 'location') ?
-          JSON.parse(newValue) :*/
-          newValue;
+        newData[key] = newValue;
       }
       else {
         newData.extra = {};
@@ -265,6 +259,8 @@ app.put(uriGadgets + '/:gadgetId/:propertyKey', bodyParser.json(), bodyParser.te
     }
   });
 });
+
+/**** TODO: ominaisuuden poisto ****/
 
 /* Yhden käyttäjän haku vaatii sisäänkirjautumisen. */
 

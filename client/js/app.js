@@ -146,21 +146,27 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
       $http.delete(uriGadgets + '/' + g._id);
 
-      /* Poistetaan laite myös $scope.gadgets:sta. */
+      /* Poistetaan karttamerkki. */
+
+      $scope.markers.forEach(function(sm) {
+        if (sm.gadgetId == g._id)
+          sm.setMap(null);
+      });
+
+      /* Poistetaan laite $scope.gadgets:sta. */
 
       var gIndex = $scope.gadgets.indexOf(g);
       if (gIndex > -1) {
         $scope.gadgets.splice(gIndex, 1);
-        /**** TODO: karttamerkit päivitettävä myös ****/
       }
     }
   }
 
-  /* Lisätään karttamerkit kartalle. */
-
-  $scope.markers = [];
+  /* Karttamerkkien lisääminen kartalle */
 
   $scope.initMarkers = function() {
+
+    $scope.markers = [];
 
     if ($scope.gadgets != undefined) {
 
@@ -168,9 +174,12 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
         $scope.markers.push(new google.maps.Marker({
           position: sg.location,
           map: $scope.map,
-          title: sg.name
+          title: sg.name,
+          gadgetId: sg._id
         }));
       });
+
+      console.log($scope.markers);
     }
     else {
 
@@ -188,6 +197,7 @@ function initMap() {
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 61.169158, lng: 28.771011 },
+    streetViewControl: false,
     zoom: 14
   });
 
