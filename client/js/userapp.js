@@ -1,19 +1,19 @@
 var usersApp = angular.module('usersApp', []);
 
 var uriUsers = '/users';
+var uriSession = '/session';
 
 usersApp.controller('usersController', ($scope, $http, $window) => {
 
   /* Tekstikenttien tyhjennys */
 
   $scope.clearLoginPopup = () => {
-    $scope.email = 'some@address.net';
-    $scope.password = '12345678';
+    $scope.email = '';
+    $scope.password = '';
+    document.getElementById('loginFailureMessage').style.display = 'none';
   }
 
   $scope.clearLoginPopup();
-
-  console.log('loginPopup opened');
 
   /* Uuden käyttäjän rekisteröintiruudun avaaminen ja sulkeminen */
 
@@ -35,17 +35,27 @@ usersApp.controller('usersController', ($scope, $http, $window) => {
 
     if ($scope.email && $scope.password) {
 
-      //console.log($scope.email + ', "' + $scope.password + '"');
+      /* Lasketaan salasanan SHA256-tiiviste. */
 
-      /* Tarkistetaan salasana. */
+      var loginAttempt = {
+        email: $scope.email,
+        passwordSHA256: $scope.password
+      };
 
-      /* Avataan istunto. */
+      /* Tarkistetaan salasana ja avataan istunto. */
 
-      /* Ladataan sama URI uudelleen. */
+      $http.post(uriSession, loginAttempt).success(function(res) {
 
-      $window.location.reload();
+        /* Istunto on avattu, joten ladataan sama URI uudelleen. */
+
+        $window.location.reload();
+
+      }).error(function (res) {
+
+        document.getElementById('loginFailureMessage').style.display = 'block';
+
+      });
+
     }
   }
-
-
 });

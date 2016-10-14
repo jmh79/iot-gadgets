@@ -81,3 +81,9 @@ a:active { color: #393; }
 #registerPopup {
   display: none;
 }
+
+#loginFailureMessage {
+  display: none;
+  color: #c00;
+  font-size: 90%;
+}

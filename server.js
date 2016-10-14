@@ -80,8 +80,8 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/' + uriClient + '/list.html');
   }
   else {
-    res.sendFile(__dirname + '/' + uriClient + '/list.html'); //////// WIP
-    //res.sendFile(__dirname + '/' + uriClient + '/login.html');
+    //res.sendFile(__dirname + '/' + uriClient + '/list.html'); //////// WIP
+    res.sendFile(__dirname + '/' + uriClient + '/login.html');
   }
 });
 
@@ -277,26 +277,20 @@ app.put(uriUsers, bodyParser.json(), (req, res) => {
 
   logRequest(req);
 
-  var g = new Gadget({
-    name: req.body.name,
-    description: req.body.description
+  var u = new GadgetUser({
+    email: req.body.email,
+    passwordSHA256: req.body.passwordSHA256
   });
 
-  /* Jokaiseen tietokannan päivitykseen liitetään aikaleima. */
+  /* MongoDB ei tallenna käyttäjää, jos jokin vaadittu kenttä on tyhjä. */
 
-  var currentDate = new Date();
-  g.created_at = currentDate;
-  g.updated_at = currentDate;
-
-  /* MongoDB ei tallenna laitetta, jos jokin vaadittu kenttä on tyhjä. */
-
-  g.save(function(err) {
+  u.save(function(err) {
     if (err) {
       res.status(400).send('Tiedot ovat virheelliset.');
     }
     else {
-      console.log('Tallennettu:', g);
-      res.status(201).send(g._id);
+      console.log('Tallennettu:', u);
+      res.status(201).send(u._id);
     }
   });
 });
@@ -305,6 +299,8 @@ app.put(uriUsers, bodyParser.json(), (req, res) => {
 
 /*
 app.get(uriGadgets + '/:username', (req, res) => {
+
+  logRequest(req);
 
   if ("login" in req.session) {
 
@@ -332,40 +328,45 @@ app.get(uriGadgets + '/:username', (req, res) => {
 
 /* Sisäänkirjautuminen */
 
-/*
 app.post(uriSession, bodyParser.json(), (req, res) => {
 
-  User.find({
-    username: req.body.username,
-    password: req.body.sha256
+  logRequest(req);
+
+  GadgetUser.find({
+    email: req.body.email,
+    passwordSHA256: req.body.passwordSHA256
   }, (err, u) => {
 
     if (err) throw err;
 
     if (u.length === 1) {
 
-      console.log(req.session);
+      //console.log(req.session);
 
       if ("login" in req.session) {
         res.status(409).send('Istunto on jo olemassa.\r\n');
       }
       else {
-        req.session.login = req.body.username;
-        res.status(201).send('Istunto avattu käyttäjälle ' + req.body.username + '.\r\n');
+        req.session.login = req.body.email;
+        res.status(201).send('Istunto avattu käyttäjälle "' + req.body.email + '"');
+        //res.status(201).sendFile(__dirname + '/' + uriClient + '/list.html');
       }
 
     }
-    else
-      res.status(404).send("Väärä käyttäjänimi tai salasana\r\n");
+    else {
+
+      res.status(401).send("Väärä käyttäjänimi tai salasana");
+    }
 
   });
 
 });
-*/
 
 /* Uloskirjautuminen */
 
 app.delete(uriSession, (req, res) => {
+
+  logRequest(req);
 
   if ("login" in req.session) {
     delete req.session.login;

@@ -1,9 +1,9 @@
 var gadgetsApp = angular.module('gadgetsApp', []);
 
 var uriGadgets = '/gadgets';
-//var uriGadgetsNew = uriGadgets + '/new';
+var uriSession = '/session';
 
-gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout) => {
+gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) => {
 
   /* Luettelosivun avaaminen */
 
@@ -138,7 +138,7 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout) => {
 
   $scope.deleteGadget = (g) => {
 
-    if (window.confirm('Poistetaanko "' + g.name + '"?')) {
+    if ($window.confirm('Poistetaanko "' + g.name + '"?')) {
 
       $http.delete(uriGadgets + '/' + g._id);
 
@@ -183,6 +183,20 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout) => {
     }
   }
 
+  /* Uloskirjautuminen */
+
+  $scope.logoutUser = () => {
+
+    /* Tarkistetaan salasana ja avataan istunto. */
+
+    $http.delete(uriSession).success(function(res) {
+
+      /* Istunto on suljettu, joten palataan kirjautumissivulle. */
+
+      $window.location.reload();
+
+    });
+  }
 });
 
 /* Google-kartan alustus */

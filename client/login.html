@@ -22,6 +22,7 @@
         <label>
           <input class="txtInput" value="{{password}}" ng-model="password" type="password" placeholder="Salasana" />
         </label>
+        <p id="loginFailureMessage">Väärä osoite tai salasana</p>
         <p>
           <button ng-click="loginUser()">OK</button>
           <a href="" ng-click="clearLoginPopup()">Tyhjennä</a>
