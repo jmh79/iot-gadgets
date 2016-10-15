@@ -47,6 +47,9 @@
 
         <div ng-repeat="g in gadgets" class="popup gadgetEditorPopup" id="edit_{{g._id}}">
           <form>
+            <p ng-show="g._id">
+              <code><a href="/gadgets/{{ g._id }}" target="_blank">{{ g._id }}</a></code>
+            </p>
             <label>
               Nimi:<br />
               <input class="txtInput" value="{{gThis.name}}" ng-model="gThis.name" />
