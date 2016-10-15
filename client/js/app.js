@@ -83,11 +83,15 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
       /* Uuden lisäys. Palvelin palauttaa _id:n HTTP-statusviestinä. */
 
-      $http.put(uriGadgets, $scope.gThis).then(function(res) {
-        $scope.gThis._id = res.data;
-        $scope.gadgets.push($scope.gThis);
-      });
+      if ($scope.gThis.name && $scope.gThis.description) {
 
+        $http.put(uriGadgets, $scope.gThis).then(function(res) {
+          $scope.gThis._id = res.data;
+          $scope.gadgets.push($scope.gThis);
+        });
+
+        $scope.closeEditor(g);
+      }
     }
     else {
 
@@ -134,9 +138,9 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
       if (Object.getOwnPropertyNames($scope.gThis).length > 0) {
         $http.put(uriGadgets + '/' + g._id, $scope.gThis);
       }
-    }
 
-    $scope.closeEditor(g);
+      $scope.closeEditor(g);
+    }
   }
 
   /* DELETE poistaa laitteen. */
@@ -171,14 +175,26 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 
     if ($scope.gadgets != undefined) {
 
+      var centerMarker;
+
       $scope.gadgets.forEach(function(sg) {
-        $scope.markers.push(new google.maps.Marker({
-          position: sg.location,
-          map: $scope.map,
-          title: sg.name,
-          gadgetId: sg._id
-        }));
+
+        if (sg.location) {
+          $scope.markers.push(new google.maps.Marker({
+            position: sg.location,
+            map: $scope.map,
+            title: sg.name,
+            gadgetId: sg._id
+          }));
+          if (centerMarker == undefined) {
+            centerMarker = sg.location;
+          }
+        }
       });
+
+      $scope.map.setCenter(centerMarker ||
+        { lat: 60.170638, lng: 24.941508 }
+      );
     }
     else {
 
@@ -209,7 +225,6 @@ gadgetsApp.controller('gadgetsController', ($scope, $http, $timeout, $window) =>
 function initMap() {
 
   map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: 61.169158, lng: 28.771011 },
     streetViewControl: false,
     zoom: 14
   });
